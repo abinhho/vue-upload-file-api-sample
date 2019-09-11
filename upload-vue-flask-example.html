@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Hello</title>
+    <script type="application/javascript" src="https://unpkg.com/vue"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+
+    <div id="myapp">
+        <file-upload></file-upload>
+    </div>
+
+    <template id="upload_temp">
+        <form id="upload_form" role="form" enctype="multipart/form-data" method="POST">
+            <input type="file" name="file" id="file" v-on:change="onFileChange" class="form-control">
+        </form>
+    </template>
+
+    <script type="text/javascript">
+        Vue.component('file-upload', {
+            template: '#upload_temp',
+            data() {
+                return {
+                    file: null
+                }
+            },
+            methods: {
+                onFileChange(e) {
+                    console.log('changed');
+                    let files = e.target.files || e.dataTransfer.files;
+                    if (!files.length)
+                        return;
+                    this.upload(files[0]);
+                },
+                upload() {
+                    var token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYmYiOjE1NjgxNzYyMzIsImp0aSI6Ijc0NWNlYjViLWVmYTktNDhkYi1iNzI3LTBiMmNiMGViMDk0ZiIsImlkZW50aXR5Ijp7InBhc3N3b3JkIjoic29jYW5AMTIzIiwidXNlcm5hbWUiOiJzb2NhbiJ9LCJmcmVzaCI6ZmFsc2UsInR5cGUiOiJhY2Nlc3MiLCJpYXQiOjE1NjgxNzYyMzIsImV4cCI6MTU2ODI2MjYzMn0.7MA2cc-UUeAVe1mCv-tBfNWSs8pB1cHEKZfIMimJ8vQ';
+
+                    var config = {
+                        headers: {
+                            'Authorization': "Bearer " + token
+                        }
+                    };
+
+                    var data = new FormData();
+                    data.append('foo', 'bar');
+                    data.append('file', document.getElementById('file').files[0]);
+                    axios.post('http://localhost:4000/api/v1/upload', data, config).then(function(response) {
+                        console.log(response)
+                    });
+                }
+            }
+
+        });
+
+        var app = new Vue({
+            el: '#myapp',
+            data: function() {
+                return {
+                    message: 'Hello Vue!',
+                }
+            }
+        })
+    </script>
+
+</body>
+
+</html>
